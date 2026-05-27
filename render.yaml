@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: darbs
+    runtime: php
+    buildCommand: |
+      npm install
+      npm run migrate
+    startCommand: php -S 0.0.0.0:$PORT
+    envVars:
+      - key: DATABASE_URL
+        scope: shared

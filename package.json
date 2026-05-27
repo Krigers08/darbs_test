@@ -1,0 +1,16 @@
+{
+  "name": "darbs",
+  "version": "1.0.0",
+  "description": "Database API with CSV import",
+  "main": "index.php",
+  "scripts": {
+    "migrate": "node migrate.js"
+  },
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "pg": "^8.10.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
