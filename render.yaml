@@ -2,10 +2,10 @@ services:
   - type: web
     name: darbs
     runtime: php
-    buildCommand: |
-      npm install
-      npm run migrate
+    buildCommand: psql $DATABASE_PUBLIC_URL < import.sql
     startCommand: php -S 0.0.0.0:$PORT
     envVars:
       - key: DATABASE_URL
+        scope: shared
+      - key: DATABASE_PUBLIC_URL
         scope: shared
