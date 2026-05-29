@@ -1,0 +1,16 @@
+{
+  "name": "darbs",
+  "version": "1.0.0",
+  "description": "Northwind sample database Node.js app",
+  "main": "index.js",
+  "scripts": {
+    "import-data": "node scripts/import-data.js"
+  },
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "pg": "^8.10.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

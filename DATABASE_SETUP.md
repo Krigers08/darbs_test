@@ -2,7 +2,25 @@
 
 ## Environment Variables
 
-Set these environment variables on your Postgres deployment (e.g., in your Render dashboard):
+### Node.js importer (Railway / Postgres)
+
+Set the `DATABASE_PUBLIC_URL` environment variable provided by Railway's Postgres service:
+
+```
+DATABASE_PUBLIC_URL=postgresql://user:password@host:port/dbname
+```
+
+Alternatively you can use the standard `pg` environment variables:
+
+```
+PGHOST=your-postgres-host
+PGPORT=5432
+PGDATABASE=your_database_name
+PGUSER=your_username
+PGPASSWORD=your_password
+```
+
+### PHP app (legacy)
 
 ```
 DB_HOST=your-postgres-host
@@ -12,43 +30,73 @@ DB_USER=your_username
 DB_PASSWORD=your_password
 ```
 
-Or create a `.env` file locally:
+---
 
+## Importing Northwind data (Node.js — recommended)
+
+The script `scripts/import-data.js` reads every CSV from `praksei/csv/`, creates
+the Northwind tables (with `IF NOT EXISTS`), and inserts all rows using
+`ON CONFLICT DO NOTHING` — so it is **safe to run multiple times**.
+
+### Prerequisites
+
+```bash
+npm install        # installs csv-parser and pg
 ```
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=darbs
-DB_USER=postgres
-DB_PASSWORD=your_password
+
+### Run
+
+```bash
+# Using the npm script shortcut:
+npm run import-data
+
+# Or directly:
+node scripts/import-data.js
 ```
 
-## Setup Instructions
+### What it imports
 
-1. **Configure your database credentials** in the environment variables or `.env` file
+| Table                  | Source CSV                    |
+|------------------------|-------------------------------|
+| Categories             | Categories.csv                |
+| Suppliers              | Suppliers.csv                 |
+| Regions                | Regions.csv                   |
+| Territories            | Territories.csv               |
+| Shippers               | Shippers.csv                  |
+| CustomerDemographics   | CustomerDemographics.csv      |
+| Products               | Products.csv                  |
+| Customers              | Customers.csv                 |
+| Employees              | Employees.csv                 |
+| EmployeeTerritories    | EmployeeTerritories.csv       |
+| Orders                 | Orders.csv                    |
+| OrderDetails           | Order Details.csv             |
+| CustomerCustomerDemo   | CustomerCustomerDemo.csv      |
 
-2. **Run the database setup script**:
-   ```bash
-   php setup_db.php
-   ```
-   This will:
-   - Create all necessary tables
-   - Load CSV data into the database
+Empty CSV files are skipped automatically with a warning.
 
-3. **Test the connection**:
-   ```bash
-   curl http://localhost:8000/index.php
-   ```
+---
 
-## Files Created
+## Importing via psql (alternative)
 
-- `db_config.php` - Database connection configuration
-- `setup_db.php` - Script to create tables and load CSV data
-- `index.php` - Updated to query from Postgres instead of JSON files
+If you have direct `psql` access you can use the existing SQL script:
 
-## Next Steps
+```bash
+psql "$DATABASE_PUBLIC_URL" -f import.sql
+```
 
-You can now:
-- Query other tables by creating new endpoints
-- Use the database for your application logic
-- Add more API routes as needed
+> **Note:** `import.sql` uses `\COPY` with relative paths, so run it from the
+> repository root.
+
+---
+
+## Files
+
+| File                        | Purpose                                      |
+|-----------------------------|----------------------------------------------|
+| `scripts/import-data.js`    | Node.js CSV → Postgres importer              |
+| `import.sql`                | psql `\COPY` script (alternative)            |
+| `db_config.php`             | PHP database connection configuration        |
+| `index.php`                 | PHP endpoint — queries Products from Postgres|
+| `praksei/csv/`              | Northwind CSV source files                   |
+| `praksei/json/`             | Northwind JSON source files                  |
 
