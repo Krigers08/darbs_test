@@ -1,3 +1,6 @@
 .env
 .env.local
 *.log
+Procfile
+node_modules
+package-lock.json
